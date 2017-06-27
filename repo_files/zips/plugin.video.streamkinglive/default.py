@@ -61,6 +61,7 @@ def start():
 		if not auth=="":
 			tools.addDir('Account Information','url',6,icon,fanart,'')
 			tools.addDir('Live TV','live',1,icon,fanart,'')
+			tools.addDir('VOD','vod',3,icon,fanart,'')
 			tools.addDir('Search','url',5,icon,fanart,'')
 			tools.addDir('Settings','url',8,icon,fanart,'')
 			tools.addDir('Extras','url',16,icon,fanart,'')
@@ -68,6 +69,7 @@ def start():
 def home():
 	tools.addDir('Account Information','url',6,icon,fanart,'')
 	tools.addDir('Live TV','live',1,icon,fanart,'')
+	tools.addDir('VOD','vod',3,icon,fanart,'')
 	tools.addDir('Search','',5,icon,fanart,'')
 	tools.addDir('Settings','url',8,icon,fanart,'')
 	tools.addDir('Extras','url',16,icon,fanart,'')
