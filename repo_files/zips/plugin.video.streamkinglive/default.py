@@ -50,7 +50,7 @@ def start():
 		else:
 			line1 = "Login Sucsessfull"
 			line2 = "Welcome to "+user.name 
-			line3 = ('[COLOR white]%s[/COLOR]'%usern)
+			line3 = ('[COLOR red]%s[/COLOR]'%usern)
 			xbmcgui.Dialog().ok(user.name, line1, line2, line3)
 			addonsettings('ADS2','')
 			xbmc.executebuiltin('Container.Refresh')
@@ -82,9 +82,11 @@ def livecategory(url):
 		name = tools.regex_from_to(a,'<title>','</title>')
 		name = base64.b64decode(name)
 		url1  = tools.regex_from_to(a,'<playlist_url>','</playlist_url>').replace('<![CDATA[','').replace(']]>','')
-		if not 'Install Videos' in name:
-			if not 'TEST CHANNELS' in name:
-					tools.addDir(name,url1,2,icon,fanart,'')
+		if xbmcaddon.Addon().getSetting('hidexxx')=='true':
+			tools.addDir('%s'%name,url1,2,icon,fanart,'')
+		else:
+			if not 'XXX |' in name:
+				tools.addDir('%s'%name,url1,2,icon,fanart,'')
 		
 def Livelist(url):
 	url  = buildcleanurl(url)
@@ -98,7 +100,13 @@ def Livelist(url):
 		thumb= tools.regex_from_to(a,'<desc_image>','</desc_image>').replace('<![CDATA[','').replace(']]>','')
 		url1  = tools.regex_from_to(a,'<stream_url>','</stream_url>').replace('<![CDATA[','').replace(']]>','')
 		desc = tools.regex_from_to(a,'<description>','</description>')
-		tools.addDir(name,url1,4,thumb,fanart,base64.b64decode(desc))
+		if xbmcaddon.Addon().getSetting('hidexxx')=='true':
+			tools.addDir(name,url1,4,thumb,fanart,base64.b64decode(desc))
+		else:
+			if not 'XXX:' in name:
+				if not 'XXX VOD:' in name:
+					tools.addDir(name,url1,4,thumb,fanart,base64.b64decode(desc))
+		
 		
 	
 def vod(url):
@@ -199,7 +207,7 @@ def tvarchive(name,description):
             if Realstart < now:
                 catchupURL = base64.b64decode("JXM6JXMvc3RyZWFtaW5nL3RpbWVzaGlmdC5waHA/dXNlcm5hbWU9JXMmcGFzc3dvcmQ9JXMmc3RyZWFtPSVzJnN0YXJ0PQ==")%(user.host,user.port,username,password,description)
                 ResultURL = catchupURL + str(Finalstart) + "&duration=%s"%(FinalDuration)
-                kanalinimi = "[COLOR white]%s[/COLOR] - %s"%(start2,ShowTitle)
+                kanalinimi = "[COLOR red]%s[/COLOR] - %s"%(start2,ShowTitle)
                 tools.addDir(kanalinimi,ResultURL,4,icon,fanart,DesC)
 
 	
@@ -223,8 +231,8 @@ def _pbhook(numblocks, blocksize, filesize, dp, start_time):
             kbps_speed = kbps_speed / 1024 
             mbps_speed = kbps_speed / 1024 
             total = float(filesize) / (1024 * 1024) 
-            mbs = '[COLOR white]%.02f MB of less than 5MB[/COLOR]' % (currently_downloaded)
-            e = '[COLOR white]Speed:  %.02f Mb/s ' % mbps_speed  + '[/COLOR]'
+            mbs = '[COLOR red]%.02f MB of less than 5MB[/COLOR]' % (currently_downloaded)
+            e = '[COLOR red]Speed:  %.02f Mb/s ' % mbps_speed  + '[/COLOR]'
             dp.update(percent, mbs, e)
         except: 
             percent = 100 
@@ -262,7 +270,7 @@ def search():
 		return False
 	text = searchdialog()
 	if not text:
-		xbmc.executebuiltin("XBMC.Notification([COLOR white][B]Search is Empty[/B][/COLOR],Aborting search,4000,"+icon+")")
+		xbmc.executebuiltin("XBMC.Notification([COLOR red][B]Search is Empty[/B][/COLOR],Aborting search,4000,"+icon+")")
 		return
 	xbmc.log(str(text))
 	open = tools.OPEN_URL(panel_api)
@@ -282,12 +290,13 @@ def settingsmenu():
 		META = '[COLOR lime]ON[/COLOR]'
 	else:
 		META = '[COLOR red]OFF[/COLOR]'
-	if xbmcaddon.Addon().getSetting('update')=='true':
-		UPDATE = '[COLOR lime]ON[/COLOR]'
+	if xbmcaddon.Addon().getSetting('hidexxx')=='true':
+		XXX = '[COLOR lime]ON[/COLOR]'
 	else:
-		UPDATE = '[COLOR red]OFF[/COLOR]'
+		XXX = '[COLOR red]OFF[/COLOR]'
 	tools.addDir('Edit Advanced Settings','ADS',10,icon,fanart,'')
 	tools.addDir('META for VOD is %s'%META,'META',10,icon,fanart,META)
+	tools.addDir('XXX Channels are %s'%XXX,'XXX',10,icon,fanart,XXX)
 	tools.addDir('Log Out','LO',10,icon,fanart,'')
 	
 
@@ -347,6 +356,13 @@ def addonsettings(url,description):
 			xbmc.executebuiltin('Container.Refresh')
 		else:
 			xbmcaddon.Addon().setSetting('meta','true')
+			xbmc.executebuiltin('Container.Refresh')
+	elif url =="XXX":
+		if 'ON' in description:
+			xbmcaddon.Addon().setSetting('hidexxx','false')
+			xbmc.executebuiltin('Container.Refresh')
+		else:
+			xbmcaddon.Addon().setSetting('hidexxx','true')
 			xbmc.executebuiltin('Container.Refresh')
 	elif url =="LO":
 		xbmcaddon.Addon().setSetting('Username','')
@@ -612,5 +628,9 @@ elif mode==15:
 	
 elif mode==16:
 	extras()
+	
+elif mode==9999:
+	xbmcgui.Dialog().ok('[COLOR red]Streamking Live[/COLOR]','This Category Will Be Available Soon!')
+	livecategory('url')
 
 xbmcplugin.endOfDirectory(int(sys.argv[1]))
